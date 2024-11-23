@@ -6,6 +6,7 @@ int X[SIZE][SIZE];         // Ma trận để lưu kết quả Sudoku
 int markR[SIZE][SIZE + 1]; // Đánh dấu các giá trị đã có trên mỗi hàng
 int markC[SIZE][SIZE + 1]; // Đánh dấu các giá trị đã có trên mỗi cột
 int markS[3][3][SIZE + 1]; // Đánh dấu các giá trị đã có trên mỗi ô 3x3
+int found = 0;             // Biến để dừng lại khi tìm thấy lời giải
 
 // Hàm kiểm tra xem có thể điền giá trị v vào vị trí hàng r, c không
 int check(int v, int r, int c)
@@ -22,6 +23,9 @@ int check(int v, int r, int c)
 // Hàm thử điền giá trị vào từng ô
 void Try(int r, int c)
 {
+      if (found) // Nếu đã tìm được lời giải, không làm gì nữa
+            return;
+
       if (r == SIZE)
       { // Nếu đã điền xong hàng cuối cùng, in kết quả
             for (int i = 0; i < SIZE; i++)
@@ -33,6 +37,7 @@ void Try(int r, int c)
                   printf("\n");
             }
             printf("\n");
+            found = 1; // Đánh dấu đã tìm thấy lời giải
             return;
       }
 
@@ -57,6 +62,9 @@ void Try(int r, int c)
 
                         Try(nextR, nextC); // Gọi đệ quy để điền các ô tiếp theo
 
+                        if (found) // Nếu đã tìm thấy lời giải, dừng lại
+                              return;
+
                         // Khôi phục lại trạng thái nếu thử sai
                         X[r][c] = 0;
                         markR[r][v] = 0;
@@ -69,25 +77,36 @@ void Try(int r, int c)
 
 int main()
 {
-      // Khởi tạo bảng Sudoku và các mảng đánh dấu
+      // Khởi tạo bảng Sudoku rỗng (toàn số 0)
       for (int i = 0; i < SIZE; i++)
       {
             for (int j = 0; j < SIZE; j++)
             {
-                  scanf("%d", &X[i][j]);
-                  if (X[i][j] != 0)
-                  { // Đánh dấu các giá trị đã cho trước
-                        int v = X[i][j];
-                        markR[i][v] = 1;
-                        markC[j][v] = 1;
-                        markS[i / 3][j / 3][v] = 1;
+                  X[i][j] = 0;
+            }
+      }
+
+      // Khởi tạo mảng đánh dấu
+      for (int i = 0; i < SIZE; i++)
+      {
+            for (int v = 1; v <= SIZE; v++)
+            {
+                  markR[i][v] = 0;
+                  markC[i][v] = 0;
+            }
+      }
+      for (int i = 0; i < 3; i++)
+      {
+            for (int j = 0; j < 3; j++)
+            {
+                  for (int v = 1; v <= SIZE; v++)
+                  {
+                        markS[i][j][v] = 0;
                   }
             }
       }
 
       // Bắt đầu thử điền các giá trị vào bảng Sudoku
-      printf("\n");
-      printf("\n");
       Try(0, 0);
 
       return 0;

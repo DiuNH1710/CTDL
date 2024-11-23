@@ -12,7 +12,7 @@ int fibonacci_memo(int n)
       {
             return n;
       }
-      if (memo[n] != -1)
+      if (memo[n] == -1)
       {
             return memo[n]; // Trả về giá trị đã tính trước đó
       }
